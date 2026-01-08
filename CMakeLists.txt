@@ -26,6 +26,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         style.qss
         style.qrc
         databasemanager.h databasemanager.cpp
+        additemdialog.h additemdialog.cpp additemdialog.ui
 
     )
 # Define target properties for Android with Qt 6 as:

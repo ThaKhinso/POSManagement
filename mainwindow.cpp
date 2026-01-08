@@ -51,7 +51,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
     QString user = ui->nameInput->text();
-    QString pass = ui->nameInput->text();
+    QString pass = ui->passInput->text();
     QSqlQuery query(QSqlDatabase::database(this->m_userData.db.databaseName()));
     query.prepare("SELECT password FROM users WHERE username = :user");
     query.bindValue(":user", user);
@@ -60,7 +60,8 @@ void MainWindow::on_pushButton_clicked()
             qInfo() << dbPassword << "\n";
             qInfo() << pass << "\n";
         if (dbPassword == pass) {
-            QMessageBox::warning(this, "Login success", "nigger"); // Login success!
+            // QMessageBox::warning(this, "Login success", "nigger"); // Login success!
+            ui->stackedWidget->setCurrentIndex(1);
         } else {
             QMessageBox::warning(this, "Error", "Incorrect password.");
         }

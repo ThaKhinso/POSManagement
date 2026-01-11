@@ -2,15 +2,47 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QPixmap>
+#include <QMenu>
+#include <QContextMenuEvent>
+#include <QCursor>
+#include "databasemanager.h"
+void ProductCard::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu menu(this);
+    QAction* editAction = menu.addAction("Edit Product");
+    QAction* deleteAction = menu.addAction("Delete this product");
 
-ProductCard::ProductCard(const productModel &product, QWidget *parent) : QFrame(parent) {
+    // Add an icon if you have them in your resources
+    // editAction->setIcon(QIcon(":/icons/edit.png"));
+
+    // Connect actions to logic
+    connect(editAction, &QAction::triggered, this, [=]() {
+        qDebug() << "Edit clicked for:" << this->model.getId(); // Or use a stored product ID
+    });
+
+    connect(deleteAction, &QAction::triggered, this, [=]() {
+        DatabaseManager::deleteProduct(this->model);
+        qDebug() << "Delete clicked";
+        emit productChanged();
+    });
+
+    // Execute the menu at the cursor position
+    menu.exec(event->globalPos());
+}
+
+ProductCard::ProductCard( productModel &product, QWidget *parent) : QFrame(parent),
+    model(product){
+
+    this->setContextMenuPolicy(Qt::DefaultContextMenu);
     // 1. Style the rectangle
     this->setFixedSize(200, 250);
     this->setStyleSheet("ProductCard { border: 1px solid #ddd; border-radius: 10px; background: white; } "
                         "ProductCard:hover { background-color: #f9f9f9; border-color: #3498db; }");
 
     QVBoxLayout *layout = new QVBoxLayout(this);
-
+    layout->setObjectName(QString::number(product.getId()));
+    // qDebug() << product.getName();
+    qDebug() << layout->objectName();
     // 2. Image (Top)
     QLabel *imgLabel = new QLabel();
     imgLabel->setPixmap(product.getThumbnail().scaled(180, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -18,7 +50,10 @@ ProductCard::ProductCard(const productModel &product, QWidget *parent) : QFrame(
 
     // 3. Name & Price (Bottom)
     QLabel *nameLabel = new QLabel(product.getName());
-    nameLabel->setStyleSheet("font-weight: bold; font-size: 14px;");
+    qDebug() << product.getName() ;
+    nameLabel->setStyleSheet("color: #27ae60; font-weight: bold; font-size: 14px;");
+    nameLabel->setWordWrap(true);
+    nameLabel->setAlignment(Qt::AlignLeft);
 
     QLabel *priceLabel = new QLabel(QString::number(product.getPrice()) + " MMK");
     priceLabel->setStyleSheet("color: #27ae60; font-size: 13px;");

@@ -7,7 +7,13 @@ class ProductCard : public QFrame
 {
     Q_OBJECT
 public:
-    explicit ProductCard(const productModel &product, QWidget *parent = nullptr);
+    void contextMenuEvent(QContextMenuEvent* event);
+    explicit ProductCard(productModel &product, QWidget *parent = nullptr);
+
+private:
+    productModel model;
+signals:
+    void productChanged(); // Signal to notify parent to reload
 };
 
 #endif // PRODUCTCARD_H

@@ -13,7 +13,7 @@ class AddItemDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddItemDialog(UserData& data, QWidget *parent = nullptr);
+    explicit AddItemDialog(QWidget *parent = nullptr);
     ~AddItemDialog();
 
 private slots:
@@ -25,7 +25,7 @@ private:
     Ui::AddItemDialog *ui;
     QString selectedImagePath;
     productModel m_model;
-    UserData m_data;
+    // UserData m_data;
 
     QByteArray tempImageData;
 };

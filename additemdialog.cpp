@@ -6,13 +6,32 @@
 #include <QSqlQuery>
 #include "databasemanager.h"
 
-AddItemDialog::AddItemDialog(UserData& data, QWidget *parent)
+AddItemDialog::AddItemDialog( QWidget *parent)
     : QDialog(parent)
-    , m_data(data)
     , m_model(0, "", nullptr, 0)
     , ui(new Ui::AddItemDialog)
 {
     ui->setupUi(this);
+}
+
+void AddItemDialog::writeProductID(QString productID)
+{
+    this->ui->productID->setText(productID);
+}
+
+void AddItemDialog::writeProductPrice(QString price)
+{
+    this->ui->productPrice->setText(price);
+}
+
+void AddItemDialog::writeProductName(QString name)
+{
+    this->ui->productName->setText(name);
+}
+
+void AddItemDialog::writePixmap(QByteArray &array)
+{
+    this->ui->lblImagePreview->setPixmap(QPixmap::)
 }
 
 AddItemDialog::~AddItemDialog()

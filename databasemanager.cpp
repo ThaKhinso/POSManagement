@@ -57,3 +57,12 @@ void DatabaseManager::saveProduct(const productModel &product)
 
 }
 
+void DatabaseManager::deleteProduct(const productModel& product) {
+    QSqlQuery query;
+    query.prepare("DELETE FROM items WHERE id = :id");
+    query.bindValue(":id", product.getId());
+
+    if(!query.exec()) {
+        qDebug() << "SQL Error:" << query.lastError().text();
+    }
+}

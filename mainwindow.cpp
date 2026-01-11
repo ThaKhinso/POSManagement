@@ -44,20 +44,18 @@ MainWindow::MainWindow(UserData &userData, QWidget *parent)
         qInfo() << "Could not open file. " << "\n";
     }
 
-    ui->CurrentItems->setWidgetResizable(false);
+    ui->CurrentItems->setWidgetResizable(true);
 
+    // Initialize the grid layout on the internal container
     if (ui->productsContainer) {
-        // Ensure the container is allowed to grow but doesn't force a loop
-        ui->productsContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-        if (!ui->productsContainer->layout()) {
-            QGridLayout *gridLayout = new QGridLayout(ui->productsContainer);
-            gridLayout->setAlignment(Qt::AlignTop);
-            // gridLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
-        }
+        QGridLayout *gridLayout = new QGridLayout(ui->productsContainer);
+        // Align items to the top-left so they don't float if the list is short
+        gridLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+        gridLayout->setContentsMargins(10, 10, 10, 10);
+        gridLayout->setSpacing(15);
     }
-
-    ui->stackedWidget->setCurrentIndex(0);
+    loadDashboardProducts();
+    // ui->stackedWidget->setCurrentIndex(0);
 
 }
 
@@ -101,6 +99,7 @@ void MainWindow::on_addNewItem_clicked()
 
     if(dialog.exec() == QDialog::Accepted) {
         qDebug() << "User clicked OK\n";
+        loadDashboardProducts();
     } else {
         qDebug() << "User cancelled";
     }
@@ -108,34 +107,34 @@ void MainWindow::on_addNewItem_clicked()
 
 void MainWindow::loadDashboardProducts()
 {
-    qDebug() << "ENTER loadDashboardProducts";
+    // Find the layout we created in the constructor
     QGridLayout *layout = qobject_cast<QGridLayout*>(ui->productsContainer->layout());
     if (!layout) return;
-    qDebug() << "Layout OK";
-    // Use a temporary list to avoid deleting while iterating if needed
+
+    // 1. Clear existing items safely
     QLayoutItem *item;
     while ((item = layout->takeAt(0)) != nullptr) {
         if (QWidget *widget = item->widget()) {
-            widget->hide();
             widget->deleteLater();
         }
         delete item;
     }
-     qDebug() << "Cleared layout";
 
+    // 2. Fetch data from your manager
     productManager manager(this->m_userData);
     QList<productModel> products = manager.getAllProducts();
-    qDebug() << "Products fetched:" << products.size();
-    int columnCount = 3;
-    for (int i = 0; i < products.size(); ++i) {
-        qDebug() << "Creating card" << i;
-        ProductCard *card = new ProductCard(products[i]);
-        qDebug() << "Card constructed" << i;
-        // Set a minimum size for the card if it doesn't have one
-        card->setMinimumSize(200, 150);
-        layout->addWidget(card, i / columnCount, i % columnCount);
 
-        qDebug() << "Card added" << i;
+    // 3. Create and add a ProductCard for each item
+    int columnCount = 7;
+    for (int i = 0; i < products.size(); ++i) {
+        ProductCard *card = new ProductCard(products[i]);
+
+        // It's helpful to set a minimum size for cards to ensure they look uniform
+        card->setMinimumSize(200, 250);
+
+        int row = i / columnCount;
+        int col = i % columnCount;
+        connect(card, &ProductCard::productChanged, this, &MainWindow::loadDashboardProducts);
+        layout->addWidget(card, row, col);
     }
-    qDebug() << "Exit dashboard";
 }

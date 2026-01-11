@@ -18,6 +18,7 @@ public:
         return &db;
     }
     static void saveProduct(const productModel &product);
+    static void deleteProduct(const productModel &product);
 private:
     QSqlDatabase db;
 };

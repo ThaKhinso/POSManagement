@@ -107,6 +107,7 @@ void MainWindow::on_addNewItem_clicked()
 
 void MainWindow::loadDashboardProducts()
 {
+    ui->productsContainer->setUpdatesEnabled(false);
     // Find the layout we created in the constructor
     QGridLayout *layout = qobject_cast<QGridLayout*>(ui->productsContainer->layout());
     if (!layout) return;
@@ -137,4 +138,5 @@ void MainWindow::loadDashboardProducts()
         connect(card, &ProductCard::productChanged, this, &MainWindow::loadDashboardProducts);
         layout->addWidget(card, row, col);
     }
+    ui->productsContainer->setUpdatesEnabled(true);
 }

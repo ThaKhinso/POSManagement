@@ -5,6 +5,7 @@
 #include <QMenu>
 #include <QContextMenuEvent>
 #include <QCursor>
+#include "additemdialog.h"
 #include "databasemanager.h"
 void ProductCard::contextMenuEvent(QContextMenuEvent *event)
 {
@@ -18,6 +19,14 @@ void ProductCard::contextMenuEvent(QContextMenuEvent *event)
     // Connect actions to logic
     connect(editAction, &QAction::triggered, this, [=]() {
         qDebug() << "Edit clicked for:" << this->model.getId(); // Or use a stored product ID
+        AddItemDialog dialog(this);
+        dialog.setWindowTitle("Edit item");
+
+        if(dialog.exec() == QDialog::Accepted) {
+            qDebug() << "User clicked OK\n";
+            loadDashboardProducts();
+        } else {
+            qDebug() << "User cancelled";
     });
 
     connect(deleteAction, &QAction::triggered, this, [=]() {
@@ -35,7 +44,7 @@ ProductCard::ProductCard( productModel &product, QWidget *parent) : QFrame(paren
 
     this->setContextMenuPolicy(Qt::DefaultContextMenu);
     // 1. Style the rectangle
-    this->setFixedSize(200, 250);
+    this->setFixedSize(200, 300);
     this->setStyleSheet("ProductCard { border: 1px solid #ddd; border-radius: 10px; background: white; } "
                         "ProductCard:hover { background-color: #f9f9f9; border-color: #3498db; }");
 

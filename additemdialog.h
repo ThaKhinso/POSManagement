@@ -14,6 +14,11 @@ class AddItemDialog : public QDialog
 
 public:
     explicit AddItemDialog(QWidget *parent = nullptr);
+    void writeProductID(QString productID);
+    void writeProductPrice(QString price);
+    void writeProductName(QString name);
+    void writePixmap(QByteArray& array);
+
     ~AddItemDialog();
 
 private slots:
